@@ -167,9 +167,9 @@ RUN mv composer.phar /usr/local/bin/composer
 
 RUN apt-get update && \
   apt-get install -y --no-install-recommends libssl-dev \
-  && curl -fsSLO --compressed https://curl.haxx.se/download/curl-7.70.0.zip \
-  && unzip curl-7.70.0.zip \
-  && cd curl-7.70.0 \
+  && curl -fsSLO --compressed https://curl.haxx.se/download/curl-7.68.0.zip \
+  && unzip curl-7.68.0.zip \
+  && cd curl-7.68.0 \
   && ./configure --prefix=/opt/curl \
   && make \
   && make install \
