@@ -2,8 +2,10 @@ FROM php:8.0-fpm-buster
 
 RUN yes | pecl install xdebug \
     && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini
+    && echo "xdebug.mode=develop" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    #&& echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.cient_host=localhost" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo 'xdebug.client_port="9003"' >> /usr/local/etc/php/conf.d/xdebug.ini
 
 ENV NGINX_VERSION   1.17.6
 ENV NJS_VERSION     0.3.7
@@ -162,6 +164,18 @@ RUN chmod +x composer.phar
 RUN mv composer.phar /usr/local/bin/composer
 
 ###
+
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends libssl-dev \
+  && curl -fsSLO --compressed https://curl.haxx.se/download/curl-7.70.0.zip \
+  && unzip curl-7.70.0.zip \
+  && cd curl-7.70.0 \
+  && ./configure --prefix=/opt/curl \
+  && make \
+  && make install \
+  #&& echo "export PATH=/opt/curl/bin:$PATH" > /etc/profile \
+  && mv /usr/bin/curl /usr/bin/curl7.64 \
+  && cp /opt/curl/bin/curl /usr/bin/curl
 
 EXPOSE 80
 
