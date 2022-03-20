@@ -2,7 +2,7 @@ FROM php:8.0-fpm-buster
 
 RUN yes | pecl install xdebug \
     && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.mode=develop" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.mode=develop,debug" >> /usr/local/etc/php/conf.d/xdebug.ini \
     #&& echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.cient_host=localhost" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo 'xdebug.client_port="9003"' >> /usr/local/etc/php/conf.d/xdebug.ini
@@ -134,23 +134,30 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
 
 ENV YARN_VERSION 1.21.1
 
-RUN set -ex \
-  && for key in \
-    6A010C5166006599AA17F08146C2130DFD2497F5 \
-  ; do \
-    #gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
-    #gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
-    gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
-  done \
-  && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
-  && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc" \
-  && gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
+# RUN set -ex \
+#   && for key in \
+#     6A010C5166006599AA17F08146C2130DFD2497F5 \
+#   ; do \
+#     #gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
+#     #gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
+#     gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
+#   done \
+#   && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
+#   && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc" \
+#   && gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
+#   && mkdir -p /opt \
+#   && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/ \
+#   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
+#   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
+#   && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz
+
+
+RUN curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
   && mkdir -p /opt \
   && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/ \
   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
   && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
-  && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz
-
+  && rm yarn-v$YARN_VERSION.tar.gz
 
 ### composer ###
 
@@ -165,17 +172,17 @@ RUN mv composer.phar /usr/local/bin/composer
 
 ###
 
-RUN apt-get update && \
-  apt-get install -y --no-install-recommends libssl-dev \
-  && curl -fsSLO --compressed https://curl.haxx.se/download/curl-7.68.0.zip \
-  && unzip curl-7.68.0.zip \
-  && cd curl-7.68.0 \
-  && ./configure --prefix=/opt/curl \
-  && make \
-  && make install \
-  #&& echo "export PATH=/opt/curl/bin:$PATH" > /etc/profile \
-  && mv /usr/bin/curl /usr/bin/curl7.64 \
-  && cp /opt/curl/bin/curl /usr/bin/curl
+# RUN apt-get update && \
+#   apt-get install -y --no-install-recommends libssl-dev \
+#   && curl -fsSLO --compressed https://curl.haxx.se/download/curl-7.68.0.zip \
+#   && unzip curl-7.68.0.zip \
+#   && cd curl-7.68.0 \
+#   && ./configure --prefix=/opt/curl \
+#   && make \
+#   && make install \
+#   #&& echo "export PATH=/opt/curl/bin:$PATH" > /etc/profile \
+#   && mv /usr/bin/curl /usr/bin/curl7.64 \
+#   && cp /opt/curl/bin/curl /usr/bin/curl
 
 EXPOSE 80
 
