@@ -2,9 +2,9 @@ FROM php:8.0-fpm-buster
 
 RUN yes | pecl install xdebug \
     && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.mode=develop,debug" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/xdebug.ini \
     #&& echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini \
-    && echo "xdebug.cient_host=localhost" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.client_host=172.17.0.1" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo 'xdebug.client_port="9003"' >> /usr/local/etc/php/conf.d/xdebug.ini
 
 ENV NGINX_VERSION   1.17.6
